@@ -11,6 +11,23 @@
   
   <%- include("partials/navbar") %>
 
+  <% if (messages && messages.length > 0) { %>
+  <div class="alert alert-danger mt-3">
+    <% messages.forEach(function(message) { %>
+      <p><%= message %></p>
+    <% }); %>
+  </div>
+  <% } %>
+
+  <% if (success && success.length > 0) { %>
+    <div class="alert alert-success mt-3">
+      <% success.forEach(function(message) { %>
+        <p><%= message %></p>
+      <% }); %>
+    </div>
+  <% } %>
+
+
   <div class="container">
     <p>Welcome, <%= user.username %> (<%= user.role %>)</p>
     <br>
@@ -32,7 +49,13 @@
           <tr>
             <td><a href="/product/<%= products[i].id %>" ><%= products[i].productName %></a></td>
             <td><img src = "images/<%= products[i].image %>" width="20%"></td>
-            <td><%= products[i].quantity %></td>
+            <td>
+              <% if (products[i].quantity === 0) { %>
+                <span class="badge bg-danger text-white" style="font-size: 0.8rem;">Out of stock</span>
+              <% } else { %>
+                <%= products[i].quantity %>
+              <% } %>
+            </td>
             <td>$<%= products[i].price.toFixed(2) %></td>
             <!-- <td>
               <select id="role" name="role" class="form-control" >

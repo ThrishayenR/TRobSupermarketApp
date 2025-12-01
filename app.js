@@ -7,6 +7,7 @@ const ProductController = require('./controllers/ProductController');
 const ProductModel = require('./models/Product'); // used for shopping listing when needed
 const UserController = require('./controllers/UserController'); // <-- use MVC user controller
 const CartItemsController = require('./controllers/CartItemController');
+const OrderController = require('./controllers/OrderController');
 const db = require('./db'); // central DB connection used by models/controllers and product routes
 
 const app = express();
@@ -67,7 +68,7 @@ const checkAdmin = (req, res, next) => {
 const validateRegistration = (req, res, next) => {
     const { username, email, password, address, contact, role } = req.body;
 
-    if (!username || !email || !password || !address || !contact || !role) {
+    if (!username || !email || !password || !address || !contact) {
         return res.status(400).send('All fields are required.');
     }
 
@@ -172,10 +173,15 @@ app.post('/users/:id/delete', checkAuthenticated, checkAdmin, UserController.del
 
 // Shopping listing for regular users (renders shopping view)
 app.get('/shopping', checkAuthenticated, (req, res) => {
-    // Use model directly here to render the shopping view
     ProductModel.getAll(function (err, products) {
         if (err) return res.status(500).send(err.message || 'Database error');
-        res.render('shopping', { user: req.session.user, products });
+
+        res.render('shopping', { 
+            user: req.session.user, 
+            products,
+            messages: req.flash('error'),
+            success: req.flash('success')
+        });
     });
 });
 
@@ -265,9 +271,10 @@ app.post('/checkout', checkAuthenticated, (req, res) => {
         }
 
         // 2. Create order
-        const createOrderSql = 'INSERT INTO orders (user_id) VALUES (?)';
+        const createOrderSql = 'INSERT INTO orders (user_id, status, orderDate) VALUES (?, "Pending", NOW())';
 
         db.query(createOrderSql, [userId], (err, orderResult) => {
+
             if (err) throw err;
 
             const orderId = orderResult.insertId;
@@ -344,6 +351,9 @@ app.get('/invoice/:orderId', checkAuthenticated, (req, res) => {
         });
     });
 });
+
+// User view pending orders
+app.get('/pending-orders', checkAuthenticated, OrderController.viewPendingOrders);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

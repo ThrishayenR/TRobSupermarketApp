@@ -30,43 +30,61 @@ const CartItemsController = {
 
     // 🔥 FIXED VERSION — ONLY this function changed
     add(req, res) {
-        const userId = (req.session.user && (req.session.user.userId || req.session.user.id));
-        if (!userId) {
-            req.flash('error', 'Please log in to add items to cart');
-            return res.redirect('/login');
-        }
+    const userId = (req.session.user && (req.session.user.userId || req.session.user.id));
+    if (!userId) {
+        req.flash('error', 'Please log in to add items to cart');
+        return res.redirect('/login');
+    }
 
-        const idFromBody = req.body.fineId || req.body.productId || req.body.fine_id || req.body.product_id;
-        const productId = parseInt(idFromBody || req.params.id, 10);
-        if (isNaN(productId)) {
-            req.flash('error', 'Invalid product id');
+    const idFromBody = req.body.fineId || req.body.productId || req.body.fine_id || req.body.product_id;
+    const productId = parseInt(idFromBody || req.params.id, 10);
+    if (isNaN(productId)) {
+        req.flash('error', 'Invalid product id');
+        return res.redirect('/shopping');
+    }
+
+    const qtyToAdd = parseInt(req.body.quantity, 10) || 1;
+
+    // STEP 1 ─ Get product stock + price
+    const productSql = "SELECT price, quantity FROM products WHERE id = ?";
+    db.query(productSql, [productId], (err, productRows) => {
+        if (err || productRows.length === 0) {
+            req.flash('error', 'Product not found');
             return res.redirect('/shopping');
         }
 
-        const qty = parseInt(req.body.quantity, 10) || 1;
+        const product = productRows[0];
+        const stock = Number(product.quantity);
+        const price = Number(product.price);
 
-        // 🔥 UPDATED: Fetch product price AND quantity, then validate stock before adding
-        const productSql = "SELECT price, quantity FROM products WHERE id = ?";
-        db.query(productSql, [productId], (err, rows) => {
-            if (err || rows.length === 0) {
-                req.flash('error', 'Product not found');
+        // STEP 2 ─ Get existing quantity in cart
+        const existingSql = `
+            SELECT quantity FROM cart_items
+            WHERE user_id = ? AND product_id = ?
+        `;
+
+        db.query(existingSql, [userId, productId], (err2, cartRows) => {
+            if (err2) {
+                req.flash('error', 'Database error checking cart');
                 return res.redirect('/shopping');
             }
 
-            const product = rows[0];
-            const productPrice = product.price;
-            const availableQty = (product.quantity != null) ? Number(product.quantity) : null;
+            const alreadyInCart = cartRows.length > 0 ? Number(cartRows[0].quantity) : 0;
 
-            // If product has a defined stock, ensure requested qty does not exceed it
-            if (availableQty != null && qty > availableQty) {
-                req.flash('error', `Requested quantity (${qty}) exceeds available stock (${availableQty})`);
+            // STEP 3 ─ Validate stock properly
+            if (alreadyInCart + qtyToAdd > stock) {
+                const remaining = stock - alreadyInCart;
+                req.flash(
+                    'error',
+                    `Only ${remaining} item(s) left in stock. You already have ${alreadyInCart} in your cart.`
+                );
                 return res.redirect('/shopping');
             }
 
-            // Now add item to cart WITH price
-            CartItems.add(userId, productId, qty, productPrice, (err) => {
-                if (err) {
-                    console.error('Cart add error:', err);
+            // STEP 4 ─ Add or update cart entry
+            CartItems.add(userId, productId, qtyToAdd, price, (err3) => {
+                if (err3) {
+                    console.error('Cart add error:', err3);
                     req.flash('error', 'Could not add item to cart');
                     return res.redirect('/shopping');
                 }
@@ -75,7 +93,9 @@ const CartItemsController = {
                 return res.redirect('/cart');
             });
         });
-    },
+    });
+},
+
 
     remove(req, res) {
         const userId = (req.session.user && (req.session.user.userId || req.session.user.id));
