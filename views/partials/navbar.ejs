@@ -1,24 +1,163 @@
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">Supermarket App</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="collapsibleNavbar">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="/shopping">Browse Products</a>
-            </li> 
-            <li class="nav-item">
-              <a class="nav-link" href="/cart">View Cart</a>
-            </li> 
-            <li class="nav-item">
-              <a class="nav-link" href="/pending-orders">Pending Orders</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Logout</a>
-            </li> 
-          </ul>
+<style>
+    /* --- Navbar Styles (Embedded) --- */
+
+    /* Base container uses the olive color */
+    .custom-navbar {
+        background-color: #8fa83e; /* The dark olive green */
+        padding: 10px 0;
+    }
+
+    /* Ensure branding and links are aligned and spaced correctly */
+    .custom-navbar .header-content {
+        /* Adjusted width for a better feel */
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Logo/Brand Style */
+    .custom-navbar .app-logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ffffff;
+        text-decoration: none;
+        margin-right: 2rem;
+    }
+
+    /* Navigation Links (List items) - Replaced old collapse logic */
+    .custom-navbar .navbar-nav {
+        flex-direction: row; /* Force horizontal layout for main links on desktop */
+        align-items: center;
+        margin-left: auto; /* Push main menu left, separate from logo/utility */
+    }
+
+    .custom-navbar .navbar-nav .nav-item {
+        margin-left: 10px;
+    }
+
+    /* Link Text Style */
+    .custom-navbar .nav-link {
+        color: #ffffff !important;
+        font-weight: 500;
+        transition: color 0.3s;
+        padding: 8px 15px;
+        border-radius: 4px;
+    }
+
+    /* Link Hover/Focus Effect */
+    .custom-navbar .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #ffffff !important;
+    }
+
+    /* Logout Button Distinction */
+    .custom-navbar .btn-logout {
+        border: 1px solid #ffffff;
+        padding: 6px 15px;
+        margin-left: 20px;
+    }
+
+    .custom-navbar .btn-logout:hover {
+        background-color: #ffffff;
+        color: #8fa83e !important;
+    }
+    
+    /* Utility Dropdown Button (New style) */
+    .custom-navbar .btn-utility {
+        color: #ffffff;
+        background: none;
+        border: none;
+        font-weight: 500;
+        padding: 8px 15px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    .custom-navbar .btn-utility:hover,
+    .custom-navbar .btn-utility:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        box-shadow: none; /* Remove default focus glow */
+    }
+    
+    /* Utility Dropdown Menu */
+    .custom-navbar .dropdown-menu {
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-top: 8px; /* Space from the button */
+    }
+    .custom-navbar .dropdown-item:hover {
+        background-color: #f0f0f0;
+        color: #8fa83e;
+    }
+    .custom-navbar .dropdown-item {
+        font-weight: 500;
+    }
+
+
+    /* Toggler Icon - Only show toggler if screen is small enough for collapse */
+    .custom-navbar .navbar-toggler {
+        display: none;
+    }
+
+    /* Small Screen Adjustments (For Mobile View) */
+    @media (max-width: 991.98px) {
+        .custom-navbar .navbar-nav {
+            display: none; /* Hide main links on small screens to prioritize space */
+        }
+        .custom-navbar .navbar-toggler {
+            display: block; /* Show toggler */
+            border-color: rgba(255, 255, 255, 0.5) !important;
+        }
+        .custom-navbar .navbar-collapse {
+            /* This section is removed as we are transitioning to a horizontal, non-collapsed design for main links */
+        }
+    }
+</style>
+
+<nav class="custom-navbar">
+    <div class="header-content">
+        <a class="app-logo" href="/">
+            OneStopMart
+        </a>
+
+        <div class="d-flex align-items-center">
+
+            <ul class="navbar-nav d-none d-lg-flex"> 
+                <li class="nav-item">
+                    <a class="nav-link" href="/shopping">🍎 Browse Products</a>
+                </li> 
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart">🛒 View Cart</a>
+                </li> 
+                <li class="nav-item">
+                    <a class="nav-link" href="/pending-orders">💵 Past Orders</a>
+                </li>
+            </ul>
+
+            <div class="dropdown ms-3">
+                <button 
+                    class="btn btn-utility dropdown-toggle" 
+                    type="button" 
+                    id="utilityDropdown" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                >
+                    More
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="utilityDropdown">
+                    <li><a class="dropdown-item" href="/contact">Contact Us</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="return false;">View Profile</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="return false;">Manage OneStopWallet</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li> 
+                </ul>
+            </div>
+            
+            <a class="nav-link btn-logout d-none d-lg-block" href="/logout">Logout</a>
+
         </div>
-      </div>
+    </div>
 </nav>

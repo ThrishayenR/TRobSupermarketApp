@@ -92,6 +92,10 @@ app.get('/', (req, res) => {
     res.render('index', { user: req.session.user });
 });
 
+app.get('/contact', (req, res) => {
+    res.render('contact'); 
+});
+
 // Inventory listing -> use ProductController
 app.get('/inventory', checkAuthenticated, checkAdmin, ProductController.list);
 
@@ -133,7 +137,7 @@ app.post('/login', (req, res) => {
             req.session.user = results[0];
             req.flash('success', 'Login successful!');
             if (req.session.user.role === 'user')
-                res.redirect('/shopping');
+                res.redirect('/');
             else
                 res.redirect('/inventory');
         } else {

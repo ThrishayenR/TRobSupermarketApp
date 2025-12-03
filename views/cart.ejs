@@ -1,83 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Your Cart</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
+    <title>Supermarket App - Your Cart</title>
+    
+    <style>
+        /* Global & Typography */
+        body {
+            background-color: #f7f7f7; /* Very light gray */
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600; 
+        }
+
+        /* Sticky Footer Fix */
+        .flex-grow-1 {
+            flex-grow: 1;
+        }
+
+        /* Custom Olive Green Button */
+        .btn-custom-olive {
+            background-color: #8fa83e;
+            border-color: #8fa83e;
+            color: white;
+            font-weight: bold;
+            border-radius: 4px; 
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .btn-custom-olive:hover {
+            background-color: #799131; 
+            border-color: #799131;
+            color: white;
+        }
+
+        /* Custom Olive Green Background */
+        .bg-custom-olive {
+            background-color: #8fa83e !important;
+        }
+
+        /* Cart Page Specific Styles */
+        .cart-header {
+            text-align: center;
+            padding: 17px 0;
+            background-color: #ffffff; /* White background for header */
+            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+        }
+        .cart-header h2 {
+            font-size: 2.5rem;
+            color: #333;
+        }
+        .cart-header .cart-icon {
+            font-size: 2.2rem;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        /* Main cart content area */
+        .cart-main-content {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+
+        /* Individual Cart Item Styling (mimicking reference) */
+        .cart-item {
+            display: flex;
+            align-items: flex-start; /* Align items to the top */
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item:last-child {
+            border-bottom: none; /* No border for the last item */
+        }
+
+        .cart-item-image {
+            width: 120px; /* Fixed width for image container */
+            flex-shrink: 0; /* Prevent image from shrinking */
+            margin-right: 20px;
+        }
+        .cart-item-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .cart-item-details {
+            flex-grow: 1; /* Allows details to take remaining space */
+        }
+        .cart-item-details h5 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .cart-item-meta {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .cart-item-actions a {
+            font-size: 0.85rem;
+            color: #666;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+        .cart-item-actions a:hover {
+            color: #8fa83e; /* Olive green on hover */
+        }
+
+        .cart-item-price-quantity {
+            flex-shrink: 0; /* Prevent from shrinking */
+            text-align: right;
+            margin-left: 20px;
+        }
+        .cart-item-price-quantity .price-each {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .cart-item-price-quantity .price-total {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .cart-item-quantity-selector {
+            width: 80px; /* Fixed width for quantity dropdown */
+            margin-top: 5px;
+        }
+        .cart-item-quantity-selector .form-control {
+            padding: 0.2rem 0.5rem; /* Smaller padding */
+            font-size: 0.9rem;
+        }
+
+        /* Summary Sidebar Styling */
+        .summary-card {
+            background-color: #fcfcfc; /* Slightly off-white for distinction */
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 25px;
+        }
+        .promo-code-section {
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .promo-code-section label {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .promo-code-section .input-group .form-control {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .promo-code-section .input-group .btn {
+            background-color: #333; /* Dark button for submit promo */
+            border-color: #333;
+            color: white;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .promo-code-section .input-group .btn:hover {
+            background-color: #555;
+            border-color: #555;
+        }
+
+        .order-summary-details div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .order-summary-details .total-line {
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            margin-top: 15px;
+        }
+        .order-summary-details .total-line span {
+            color: #333;
+        }
+
+        /* Checkout button */
+        .checkout-btn-container {
+            text-align: center;
+            padding-top: 20px;
+        }
+        .checkout-btn-container .btn-custom-olive {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1.15rem;
+        }
+        .checkout-btn-container .lock-icon {
+            margin-right: 8px;
+        }
+
+        /* Empty Cart Message */
+        .empty-cart-message {
+            text-align: center;
+            padding: 50px 0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .empty-cart-message h3 {
+            color: #666;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
-<body>
-  <%- include("partials/navbar") %>
 
-  <!-- Cart Content -->
-  <div class="container">
-    <h2 class="mt-4">Shopping Cart</h2>
+<body class="d-flex flex-column min-vh-100">
+    <%- include("partials/navbar") %>
 
-    <% if (!cartItems || cartItems.length === 0) { %>
-      <p>Your cart is empty.</p>
-      <a href="/shopping" class="btn btn-primary mt-3">Back to Shopping</a>
-    <% } else { %>
+    <div class="cart-header">
+        <h4><i class="fas fa-shopping-bag cart-icon"></i>My Cart</h4>
+    </div>
 
-      <table class="table table-bordered mt-3">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Image</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Line Total</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% let total = 0; %>
-          <% for (let i = 0; i < cartItems.length; i++) { 
-               const item = cartItems[i];
-               const lineTotal = (Number(item.price) || 0) * (Number(item.quantity) || 0);
-               total += lineTotal;
-          %>
-            <tr>
-              <td><%= item.productName %></td>
-              <td>
-                <% if (item.image) { %>
-                  <img src="/images/<%= item.image %>" width="80" class="img-thumbnail">
-                <% } else { %>
-                  <span class="text-muted">No image</span>
-                <% } %>
-              </td>
-              <td>$<%= (Number(item.price) || 0).toFixed(2) %></td>
-              <td><%= item.quantity %></td>
-              <td>$<%= lineTotal.toFixed(2) %></td>
-              <td>
-                <form action="/cart/remove" method="POST" class="d-inline">
-                  <input type="hidden" name="fineId" value="<%= item.product_id %>">
-                  <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-                </form>
-              </td>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
+    <div class="container flex-grow-1">
+        <% if (!cartItems || cartItems.length === 0) { %>
+            <div class="empty-cart-message">
+                <h3>Your cart is empty.</h3>
+                <a href="/shopping" class="btn btn-custom-olive mt-3">Back to Shopping</a>
+            </div>
+        <% } else { %>
+            <div class="row">
+                <div class="col-lg-8 mb-4">
+                    <div class="cart-main-content">
+                        <% let total = 0; %>
+                        <% for (let i = 0; i < cartItems.length; i++) { 
+                            const item = cartItems[i];
+                            const lineTotal = (Number(item.price) || 0) * (Number(item.quantity) || 0);
+                            total += lineTotal;
+                        %>
+                            <div class="cart-item">
+                                <div class="cart-item-image">
+                                    <% if (item.image) { %>
+                                        <img src="/images/<%= item.image %>" alt="<%= item.productName %>">
+                                    <% } else { %>
+                                        <span class="text-muted small">No image</span>
+                                    <% } %>
+                                </div>
+                                <div class="cart-item-details">
+                                    <h5><%= item.productName %></h5>
+                                    <div class="cart-item-meta">
+                                        In Stock
+                                    </div>
+                                    <div class="cart-item-actions mt-3">
+                                        <a href="/product/<%= item.product_id %>">Edit</a> <form action="/cart/remove" method="POST" class="d-inline">
+                                            <input type="hidden" name="fineId" value="<%= item.product_id %>">
+                                            <button type="submit" class="btn btn-link text-danger p-0">Remove</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="cart-item-price-quantity">
+                                    <div class="price-each">Each $<%= (Number(item.price) || 0).toFixed(2) %></div>
+                                    <div class="cart-item-quantity-selector">
+                                        <select id="quantity-<%= item.product_id %>" name="quantity" class="form-control" onchange="this.form.submit()">
+                                            <% for (let q = 1; q <= 10; q++) { %> <option value="<%= q %>" <%= item.quantity == q ? 'selected' : '' %>>
+                                                    <%= q %>
+                                                </option>
+                                            <% } %>
+                                        </select>
+                                        <form action="/cart/update-quantity" method="POST" class="d-none">
+                                            <input type="hidden" name="productId" value="<%= item.product_id %>">
+                                            <input type="hidden" name="newQuantity" id="hidden-quantity-<%= item.product_id %>">
+                                        </form>
+                                        <script>
+                                            document.getElementById('quantity-<%= item.product_id %>').onchange = function() {
+                                                document.getElementById('hidden-quantity-<%= item.product_id %>').value = this.value;
+                                                this.form.submit();
+                                            };
+                                        </script>
+                                    </div>
+                                    <div class="price-total mt-2">
+                                        Total: $<%= lineTotal.toFixed(2) %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
 
-      <h4>Total: $<%= total.toFixed(2) %></h4>
+                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                            <h5 class="mb-0 text-muted"><%= cartItems.length %> Items</h5> <h5 class="mb-0">Total: $<%= total.toFixed(2) %></h5>
+                        </div>
+                        
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a href="/shopping" class="btn btn-outline-secondary">Back to Shopping</a>
+                            <form action="/cart/clear" method="POST">
+                                <button type="submit" class="btn btn-outline-warning">Clear Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
-      <div class="mt-4 d-flex gap-2">
-        <a href="/shopping" class="btn btn-secondary">Back to Shopping</a>
+                <div class="col-lg-4">
+                    <div class="summary-card">
+                        <div class="promo-code-section">
+                            <label for="promoCode" class="form-label">ENTER PROMO CODE</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Promo Code" id="promoCode">
+                                <button class="btn" type="button">Submit</button>
+                            </div>
+                        </div>
 
-        <form action="/cart/clear" method="POST">
-          <button type="submit" class="btn btn-warning">Clear Cart</button>
-        </form>
+                        <div class="order-summary-details">
+                            <div>
+                                <span>Shipping cost</span>
+                                <span style="background-color: #4CAF50; color: #ffffff; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; display: inline-block;">FREE</span>
+                            </div>
+                            <div>
+                                <span>Discount</span>
+                                <span>😔 No Discounts Available</span>
+                            </div>
+                            <div>
+                                <span>GST</span>
+                                <span style="background-color: #4CAF50; color: #ffffff; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; display: inline-block;">INCLUSIVE</span>
+                            </div>
+                            <div class="total-line">
+                                <span>Estimated Total</span>
+                                <span>$<%= total.toFixed(2) %></span>
+                            </div>
+                            </div>
+                        
+                        <div class="checkout-btn-container">
+                            <form action="/checkout" method="POST">
+                                <button type="submit" class="btn btn-custom-olive">
+                                    <i class="fas fa-lock lock-icon"></i> Checkout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
 
-        <form action="/checkout" method="POST" class="d-inline">
-          <button type="submit" class="btn btn-primary">Checkout</button>
-        </form>
+    <%- include("partials/footer") %>
 
-      </div>
-
-    <% } %>
-  </div>
-
-  <%- include("partials/footer") %>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit-id.js" crossorigin="anonymous"></script>
+    <script>
+        // CLIENT-SIDE QUANTITY UPDATE SCRIPT (to update the hidden field before submitting)
+        // This is a more robust way to handle the quantity update if you send it via a form
+        // I've kept the original form's onchange behavior, but this gives more flexibility
+        document.querySelectorAll('.cart-item-quantity-selector select').forEach(selectElement => {
+            selectElement.addEventListener('change', function() {
+                const productId = this.id.replace('quantity-', '');
+                const hiddenQuantityInput = document.getElementById('hidden-quantity-' + productId);
+                if (hiddenQuantityInput) {
+                    hiddenQuantityInput.value = this.value;
+                    // If you want to automatically submit the form on quantity change, you'd trigger it here
+                    // e.g., this.closest('form').submit(); 
+                    // However, your original functionality didn't explicitly show auto-submission per item.
+                    // If your backend needs an explicit form submit for each item's quantity change,
+                    // you'll need a separate form for each item around the select, or use AJAX.
+                    // For now, I've linked it directly in the select's onchange for simplicity.
+                }
+            });
+        });
+    </script>
 </body>
 </html>

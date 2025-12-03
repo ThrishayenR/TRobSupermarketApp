@@ -5,28 +5,295 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <title>Supermarket App</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/your-fontawesome-kit-id.js" crossorigin="anonymous"></script>
+
+  <title>Supermarket App - Home</title>
+
+<style>
+    /* --- Global Styles --- */
+    body {
+        background-color: #f7f7f7;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Reuse your olive theme */
+    .text-custom-olive { color: #8fa83e; }
+    .bg-custom-olive { background-color: #8fa83e; }
+    .btn-custom-olive {
+        background-color: #8fa83e;
+        border-color: #8fa83e;
+        color: white;
+        font-weight: 600;
+        padding: 10px 30px;
+        border-radius: 50px; /* Rounded pill buttons for home page */
+    }
+    .btn-custom-olive:hover {
+        background-color: #799131;
+        color: white;
+    }
+
+    /* --- Carousel Styling --- */
+    .hero-carousel {
+        margin-bottom: 40px;
+    }
+    
+    /* Fix 1: Make carousel items position relative for the overlay */
+    .carousel-item {
+        position: relative; 
+    }
+    
+    .carousel-item img {
+        height: 600px; /* Fixed height for consistency */
+        object-fit: cover; /* Ensures images cover the area without stretching */
+        border-radius: 0 0 20px 20px; /* Rounded bottom corners for modern look */
+    }
+
+    /* Fix 2: Add the gradient overlay */
+    .carousel-item::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50%; /* Covers the bottom half */
+        /* Black gradient fading to transparent at the top */
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent); 
+        border-radius: 0 0 20px 20px; 
+        z-index: 1; /* Below the caption */
+    }
+
+    /* Fix 3: Ensure caption text is above the gradient and has better spacing */
+    .carousel-caption {
+        z-index: 2; 
+        padding-bottom: 30px; 
+    }
+
+    /* --- Category Circles Styling --- */
+    .category-section {
+        margin-bottom: 50px;
+    }
+    .category-item {
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s;
+        text-decoration: none;
+        color: #333;
+        display: block;
+    }
+    .category-item:hover {
+        transform: translateY(-5px);
+        color: #8fa83e;
+    }
+    .category-icon {
+        width: 80px;
+        height: 80px;
+        background-color: #ffffff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px auto;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        border: 2px solid transparent;
+        transition: border-color 0.2s;
+    }
+    .category-item:hover .category-icon {
+        border-color: #8fa83e;
+    }
+
+    .category-img {
+    max-width: 80%; /* Ensure the image fits inside the 80px circle */
+    max-height: 80%;
+    border-radius: 50%; /* Optional: Makes the image itself circular */
+    object-fit: contain; /* Ensures the image scales down without cropping */
+    }
+
+    /* --- Featured Section --- */
+    .featured-card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: box-shadow 0.3s;
+    }
+    .featured-card:hover {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .featured-img-placeholder {
+        background-color: #e0e0e0;
+        height: 200px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #888;
+    }
+
+    /* --- Sticky Footer Logic --- */
+    .flex-grow-1 { flex-grow: 1; }
+</style>
 </head>
-<body>
+
+<body class="d-flex flex-column min-vh-100">
+
     <%- include("partials/navbar") %>
 
-    <div class="container">
-        <p style="text-align: center;">
-            <% if (user) {%>
-              <% if (user.role === "admin") { %>
-                <br>
-                Back to <a href="/inventory">inventory!</a>
-              <% } else { %>
-                <br>
-                Continue <a href="/shopping">Shopping!</a>
-                <% } %>
-            <% } else { %>
-            <br>
-            Welcome to supermarket app! <br>
-            Please <a href = "/login" >login</a> to continue...
-            <% } %>
-        </p>
+    <div id="homeCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://media.nedigital.sg/fairprice/images/524a59be-425b-4222-858f-551b89548d04/OG-Campaign-Ecomm-Christmas-Wk4-HomeMainBanner-20251127.jpg?w=1920&q=75" class="d-block w-100" alt="Fresh Deals">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Merry Christmas!</h5>
+                    <p>Wishing you a merry Christmas from OneStopMart!</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://img1.rtacdn-os.com/dshop/202510/04250cc0-3ffd-406c-aa1f-e6b79026b3a6_.webp" class="d-block w-100" alt="Weekly Specials">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Christmas Pre-Orders</h5>
+                    <p>Get the best deals from OneStopMart this festive season!</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://img.rtacdn-os.com/dshop/202512/4d3ce714-f372-4fba-a1bd-0aac2ddd88cc_.webp" class="d-block w-100" alt="Household">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Freshness, nothing else.</h5>
+                    <p>All our products are 100% fresh. Anytime, anywhere.</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <div class="container flex-grow-1">
         
+        <div class="text-center my-5">
+            <% if (user) {%>
+                <h2 class="mb-3">Welcome back, <span class="text-custom-olive"><%= user.username || "Shopper" %></span>!</h2>
+                <p class="text-muted mb-4">Ready to fill your pantry? Check out our latest arrivals.</p>
+                
+                <% if (user.role === "admin") { %>
+                    <a href="/inventory" class="btn btn-custom-olive btn-lg shadow">
+                        <i class="fas fa-boxes me-2"></i> Manage Inventory
+                    </a>
+                <% } else { %>
+                    <a href="/shopping" class="btn btn-custom-olive btn-lg shadow">
+                        <i class="fas fa-shopping-cart me-2"></i> View all Products
+                    </a>
+                <% } %>
+
+            <% } else { %>
+                <h2 class="mb-3">Welcome to <span class="text-custom-olive">Supermarket App</span></h2>
+                <p class="text-muted mb-4">Your one-stop shop for fresh groceries and daily essentials.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/login" class="btn btn-custom-olive btn-lg shadow px-5">Login</a>
+                    <a href="/register" class="btn btn-outline-secondary btn-lg shadow px-5">Sign Up</a>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="category-section">
+            <h4 class="mb-4">Shop by Category</h4>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4 justify-content-center">
+                <div class="col">
+                    <a href="/shopping" class="category-item">
+                        <div class="category-icon">
+                            <img src="https://img2.rtacdn-os.com/dshop/202503/892cff87-f9e1-4d24-a253-62754e52a9d9_.webp" alt="Fruits & Veg Icon" class="category-img">
+                        </div>
+                        <span>Fruits & Veg</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/shopping" class="category-item">
+                        <div class="category-icon">
+                            <img src="https://media.nedigital.sg/fairprice/images/56aec8cc-36e8-4ddd-91f9-56484db4ccb3/L1_Meat&Seafood_120522.jpg" alt="Fruits & Veg Icon" class="category-img">
+                        </div>
+                        <span>Meat & Seafood</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/shopping" class="category-item">
+                        <div class="category-icon">
+                            <img src="https://img2.rtacdn-os.com/dshop/202503/75ba4146-9592-4b79-9610-519fa78954cf_.webp" alt="Fruits & Veg Icon" class="category-img">
+                        </div>
+                        <span>Dairy & Chilled</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/shopping" class="category-item">
+                        <div class="category-icon">
+                            <img src="https://media.nedigital.sg/fairprice/images/93a21bde-eed6-4d91-9c6c-a469a51c6310/L1_Drinks_120522.jpg" alt="Fruits & Veg Icon" class="category-img">
+                        </div>
+                        <span>Beverages</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/shopping" class="category-item">
+                        <div class="category-icon">
+                            <img src="https://media.nedigital.sg/fairprice/images/02308299-0475-4977-b910-12ba88eef716/L1_Bakery_120522.jpg" alt="Fruits & Veg Icon" class="category-img">
+                        </div>
+                        <span>Bakery</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/shopping" class="category-item">
+                        <div class="category-icon">
+                            <img src="https://media.nedigital.sg/fairprice/images/87cc95d2-04d4-4c7c-a645-31ce56189cce/L1_Frozen_120522.jpg" alt="Fruits & Veg Icon" class="category-img">
+                        </div>
+                        <span>Frozen</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+      <h4 class="mb-4">Popular Products</h4>
+        <div class="row g-4 mb-5">
+            
+            <div class="col-md-6">
+                <div class="featured-card position-relative">
+                    <img src="http://localhost:3000/images/image_2025-12-03_154418063.png" class="img-fluid w-100" alt="Fresh Salmon">
+                    
+                    <div class="position-absolute top-0 start-0 p-4 text-white">
+                        <h4 class="mb-0 fw-bold">Fresh Salmon</h4>
+                        <p class="small">The perfect weeknight dinner.</p>
+                    </div>
+                    
+                    <div class="position-absolute bottom-0 start-0 p-4">
+                        <a href="/shopping" class="btn btn-sm btn-custom-olive shadow fw-bold">View Product</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="featured-card position-relative">
+                    <img src="http://localhost:3000/images/image_2025-11-23_205542023.png" class="img-fluid w-100" alt="Dark Chocolate">
+                    
+                    <div class="position-absolute top-0 start-0 p-4 text-white">
+                        <h4 class="mb-0 fw-bold">Dark Chocolate</h4>
+                        <p class="small">Rich and satisfying treat.</p>
+                    </div>
+                    
+                    <div class="position-absolute bottom-0 start-0 p-4">
+                        <a href="/shopping" class="btn btn-sm btn-custom-olive shadow fw-bold">View Product</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
     </div>
 
     <%- include("partials/footer") %>
