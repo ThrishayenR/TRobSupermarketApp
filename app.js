@@ -120,33 +120,49 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
-    // Validate email and password
     if (!email || !password) {
         req.flash('error', 'All fields are required.');
         return res.redirect('/login');
     }
 
-    const sql = 'SELECT * FROM users WHERE email = ? AND password = SHA1(?)';
+    const sql = `
+        SELECT id, username, email, password, address, contact, role, totp_secret
+        FROM users
+        WHERE email = ? AND password = SHA1(?)
+    `;
+
     db.query(sql, [email, password], (err, results) => {
-        if (err) {
-            throw err;
+        if (err) throw err;
+
+        if (results.length === 0) {
+            req.flash('error', 'Invalid email or password.');
+            return res.redirect('/login');
         }
 
-        if (results.length > 0) {
-            // Successful login
-            req.session.user = results[0];
-            req.flash('success', 'Login successful!');
-            if (req.session.user.role === 'user')
-                res.redirect('/');
-            else
-                res.redirect('/inventory');
-        } else {
-            // Invalid credentials
-            req.flash('error', 'Invalid email or password.');
-            res.redirect('/login');
+        const user = results[0];
+        console.log("Login user:", user.id, "totp_secret:", user.totp_secret);
+
+        // 🔑 2FA CHECK HERE
+        if (user.totp_secret) {
+            req.session.tempUserId = user.id;
+            return res.redirect('/verify-2fa');
         }
+
+        // No 2FA → normal login
+        req.session.user = user;
+        req.flash('success', 'Login successful!');
+        return user.role === 'user'
+            ? res.redirect('/')
+            : res.redirect('/inventory');
     });
 });
+
+// 2FA Verification routes
+app.get('/setup-2fa', UserController.setup2FA);
+app.post('/setup-2fa', UserController.verify2FASetup);
+
+app.get('/verify-2fa', UserController.verify2FAPage);
+app.post('/verify-2fa', UserController.verify2FA);
 
 // User management routes using MVC controller (RESTful)
 // List all users (admin only)
